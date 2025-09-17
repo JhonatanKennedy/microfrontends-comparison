@@ -2,7 +2,8 @@
   "name": "home-app",
   "version": "1.0.0",
   "scripts": {
-    "start": "webpack serve"
+    "start": "webpack serve --mode development",
+    "build": "webpack --mode production"
   },
   "dependencies": {
     "react": "^18.2.0",
