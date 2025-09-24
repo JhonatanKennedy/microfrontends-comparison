@@ -1,0 +1,10 @@
+services:
+  shell-app:
+    build: ./shell-app
+    ports:
+      - "9000:80"
+
+  home-app:
+    build: ./home-app
+    ports:
+      - "8001:80"
