@@ -2,9 +2,9 @@ services:
   shell-app:
     build: ./shell-app
     ports:
-      - "3000:80"
+      - "9000:80"
 
   home-app:
     build: ./home-app
     ports:
-      - "3001:80"
+      - "8001:80"

@@ -1,43 +1,51 @@
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPlugin');
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const ModuleFederationPlugin = require("webpack/lib/container/ModuleFederationPlugin");
 
 module.exports = {
-  mode: 'development',
-  entry: './src/index.js',
+  mode: "development",
+  entry: "./src/index.js",
+  resolve: {
+    extensions: [".ts", ".tsx", ".js", ".jsx"],
+  },
   output: {
-    publicPath: 'http://localhost:3000/',
+    publicPath: "http://localhost:9000/",
   },
   devServer: {
-    port: 3000,
+    port: 9000,
   },
   module: {
     rules: [
       {
+        test: /\.tsx?$/,
+        loader: "ts-loader",
+        exclude: /node_modules/,
+      },
+      {
         test: /\.jsx?$/,
-        loader: 'babel-loader',
+        loader: "babel-loader",
         options: {
-          presets: ['@babel/preset-react'],
+          presets: ["@babel/preset-react"],
         },
       },
     ],
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: './public/index.html',
+      template: "./public/index.html",
     }),
     new ModuleFederationPlugin({
-      name: 'shell',
+      name: "shell",
       remotes: {
-        HomeApp: 'home@http://localhost:3001/remoteEntry.js',
+        HomeApp: "home@http://localhost:8001/remoteEntry.js",
       },
       shared: {
         react: {
           singleton: true,
-          requiredVersion: '^18.2.0',
+          requiredVersion: "^18.2.0",
         },
-        'react-dom': {
+        "react-dom": {
           singleton: true,
-          requiredVersion: '^18.2.0',
+          requiredVersion: "^18.2.0",
         },
       },
     }),
