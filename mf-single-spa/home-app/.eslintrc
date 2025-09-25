@@ -1,14 +1,11 @@
 {
-  "extends": [
-    "react-important-stuff",
-    "plugin:prettier/recommended"
-  ],
+  "extends": ["ts-react-important-stuff", "plugin:prettier/recommended"],
   "parser": "@babel/eslint-parser",
   "parserOptions": {
     "ecmaFeatures": {
       "jsx": true
     },
-    "babelOptions":{
+    "babelOptions": {
       "root": "./"
     }
   }
