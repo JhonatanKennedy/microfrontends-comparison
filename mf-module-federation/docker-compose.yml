@@ -8,3 +8,7 @@ services:
     build: ./home-app
     ports:
       - "8001:80"
+  ui-utils:
+    build: ./ui-utils
+    ports:
+      - "7000:80"

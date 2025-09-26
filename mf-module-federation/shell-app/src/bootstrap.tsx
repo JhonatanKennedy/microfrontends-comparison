@@ -1,12 +1,13 @@
 import React, { Suspense, lazy } from "react";
 import { createRoot } from "react-dom/client";
+import Button from "uiUtils/Button";
 
-const Home = lazy(() => import("HomeApp/Home"));
+const Home = lazy(() => import("homeApp/Home"));
 
 function App() {
   return (
     <div>
-      <h1>E-Commerce Shell asasssa</h1>
+      <h1>E-Commerce Shell</h1>
       <nav>
         <a href="#products">Products</a>
         <a href="#cart">Cart</a>
@@ -14,9 +15,12 @@ function App() {
       <Suspense fallback={<div>Loading...</div>}>
         <section>
           <h2>Product List</h2>
+
           <Home />
         </section>
       </Suspense>
+
+      <Button />
     </div>
   );
 }

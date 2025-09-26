@@ -1,17 +1,16 @@
-const HtmlWebpackPlugin = require("html-webpack-plugin");
 const ModuleFederationPlugin = require("webpack/lib/container/ModuleFederationPlugin");
 
 module.exports = {
   mode: "development",
-  entry: "./src/index.js",
+  entry: "./src/index",
   resolve: {
     extensions: [".ts", ".tsx", ".js", ".jsx"],
   },
   output: {
-    publicPath: "http://localhost:8001/",
+    publicPath: "http://localhost:7000/",
   },
   devServer: {
-    port: 8001,
+    port: 7000,
   },
   module: {
     rules: [
@@ -23,14 +22,11 @@ module.exports = {
     ],
   },
   plugins: [
-    new HtmlWebpackPlugin({
-      template: "./public/index.html",
-    }),
     new ModuleFederationPlugin({
-      name: "homeApp",
+      name: "uiUtils",
       filename: "remoteEntry.js",
       exposes: {
-        "./Home": "./src/home.tsx",
+        "./Button": "./src/Button/index.tsx",
       },
       shared: {
         react: {

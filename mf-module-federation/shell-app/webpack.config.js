@@ -20,13 +20,6 @@ module.exports = {
         loader: "ts-loader",
         exclude: /node_modules/,
       },
-      {
-        test: /\.jsx?$/,
-        loader: "babel-loader",
-        options: {
-          presets: ["@babel/preset-react"],
-        },
-      },
     ],
   },
   plugins: [
@@ -36,7 +29,8 @@ module.exports = {
     new ModuleFederationPlugin({
       name: "shell",
       remotes: {
-        HomeApp: "home@http://localhost:8001/remoteEntry.js",
+        homeApp: "homeApp@http://localhost:8001/remoteEntry.js",
+        uiUtils: "uiUtils@http://localhost:7000/remoteEntry.js",
       },
       shared: {
         react: {
