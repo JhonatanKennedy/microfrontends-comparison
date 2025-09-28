@@ -30,7 +30,6 @@ module.exports = {
       name: "shell",
       remotes: {
         homeApp: "homeApp@http://localhost:8001/remoteEntry.js",
-        uiUtils: "uiUtils@http://localhost:7000/remoteEntry.js",
       },
       shared: {
         react: {
