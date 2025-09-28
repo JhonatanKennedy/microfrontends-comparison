@@ -37,3 +37,5 @@ declare module "*.svg" {
   const src: string;
   export default src;
 }
+
+declare module "@single-spa/ui-utils";
