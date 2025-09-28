@@ -9,9 +9,12 @@
     "skipLibCheck": true,
     "strict": true,
     "jsx": "react-jsx",
-    "baseUrl": "./src",
+    "baseUrl": ".",
+    "allowSyntheticDefaultImports": true,
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./src/*"],
+      "interfaces": ["../../interfaces/src/index"],
+      "interfaces/*": ["../../interfaces/src/*"]
     }
   },
   "include": ["src"],
