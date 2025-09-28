@@ -1,9 +1,15 @@
-import React from "react";
+import Button from "uiUtils/Button";
+import Box from "uiUtils/Box";
+import Icon from "uiUtils/Icon";
 
 export default function Home() {
   return (
-    <div style={{ display: "flex", flexWrap: "wrap", gap: "20px" }}>
-      <span>teste123</span>
+    <div>
+      <Box gap={10} direction={"column"}>
+        <Icon name={"plus"} />
+        <Button />
+        <Button />
+      </Box>
     </div>
   );
 }
