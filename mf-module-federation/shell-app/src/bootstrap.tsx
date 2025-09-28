@@ -1,26 +1,15 @@
-import React, { Suspense, lazy } from "react";
+import { Suspense, lazy } from "react";
 import { createRoot } from "react-dom/client";
-import Button from "uiUtils/Button";
 
 const Home = lazy(() => import("homeApp/Home"));
 
 function App() {
+  //TODO trazer um react router dom pra um arquivo proximo e importar aqui
   return (
     <div>
-      <h1>E-Commerce Shell</h1>
-      <nav>
-        <a href="#products">Products</a>
-        <a href="#cart">Cart</a>
-      </nav>
       <Suspense fallback={<div>Loading...</div>}>
-        <section>
-          <h2>Product List</h2>
-
-          <Home />
-        </section>
+        <Home />
       </Suspense>
-
-      <Button />
     </div>
   );
 }
