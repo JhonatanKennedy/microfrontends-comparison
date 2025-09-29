@@ -1,0 +1,76 @@
+{
+  "products": [
+    {
+      "name": "Bolo de Rolo",
+      "value": 45.5,
+      "description": "Finas camadas de pão de ló enroladas com um delicioso recheio de goiabada. Patrimônio cultural de Pernambuco.",
+      "photoURL": "bolo-de-rolo.png"
+    },
+    {
+      "name": "Tapioca de Queijo Coalho",
+      "value": 18.0,
+      "description": "Goma de tapioca crocante recheada com queijo coalho tostado na chapa.",
+      "photoURL": "tapioca.jpeg"
+    },
+    {
+      "name": "Moqueca de Camarão",
+      "value": 95.9,
+      "description": "Cozido cremoso de camarões frescos com leite de coco, azeite de dendê e pimentões. Acompanha arroz e pirão.",
+      "photoURL": "moqueca.jpg"
+    },
+    {
+      "name": "Carne de Sol com Macaxeira",
+      "value": 89.9,
+      "description": "Carne de sol desfiada e acebolada, servida com macaxeira frita crocante e manteiga de garrafa.",
+      "photoURL": "carne-de-sol.jpg"
+    },
+    {
+      "name": "Feijoada Pernambucana",
+      "value": 75.0,
+      "description": "Versão nordestina da feijoada, com feijão mulatinho, carnes salgadas, couve, e farofa.",
+      "photoURL": "feijoada.jpg"
+    },
+    {
+      "name": "Dobradinha",
+      "value": 42.0,
+      "description": "Prato robusto feito com bucho bovino, feijão branco e linguiça, cozidos lentamente em um molho saboroso.",
+      "photoURL": "dobradinha.jpg"
+    },
+    {
+      "name": "Caldinho de Feijão",
+      "value": 12.5,
+      "description": "Copo de caldo de feijão preto cremoso e bem temperado, servido quente. Perfeito para começar.",
+      "photoURL": "caldinho.jpg"
+    },
+    {
+      "name": "Sarapatel",
+      "value": 48.0,
+      "description": "Guisado tradicional feito com miúdos de porco e sangue coagulado, temperado com hortelã e especiarias.",
+      "photoURL": "sarapatel.jpg"
+    },
+    {
+      "name": "Galinha Cabidela",
+      "value": 65.0,
+      "description": "Frango cozido lentamente em seu próprio sangue, resultando em um molho escuro, rico e levemente ácido.",
+      "photoURL": "galinha-cabidela.png"
+    },
+    {
+      "name": "Pamonha Doce",
+      "value": 15.0,
+      "description": "Massa de milho verde cozida na própria palha do milho. Um clássico das festas juninas.",
+      "photoURL": "pamonha.jpg"
+    },
+    {
+      "name": "Canjica",
+      "value": 14.0,
+      "description": "Creme de milho doce e cremoso, cozido com leite de coco e finalizado com canela em pó.",
+      "photoURL": "canjica.jpg"
+    },
+    {
+      "name": "Acarajé",
+      "value": 22.0,
+      "description": "Bolinho de feijão-fradinho frito no azeite de dendê, recheado com vatapá, caruru e camarão seco.",
+      "photoURL": "acaraje.jpg"
+    }
+  ]
+}
