@@ -1,13 +1,6 @@
-import { Icon, Button } from "@single-spa/ui-utils";
+import { Home } from "./template";
+import "./global.css";
 
 export default function Root(props) {
-  return (
-    <section>
-      {props.name} is mounted!
-      <div>
-        <Icon name={"plus"} />
-        <Button />
-      </div>
-    </section>
-  );
+  return <Home />;
 }
