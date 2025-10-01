@@ -4,8 +4,8 @@ import {
   Input,
   Typography,
   IconButton,
+  navigateOnButtonPress,
 } from "@single-spa/ui-utils";
-import { MouseEvent } from "react";
 
 type THeaderProps = {
   countCar: number;
@@ -14,10 +14,6 @@ type THeaderProps = {
 
 export function Header({ onChangeName, countCar }: THeaderProps) {
   const count = countCar > 9 ? "9+" : String(countCar);
-
-  function handleCart(e: MouseEvent<HTMLButtonElement>) {
-    window.location.pathname = e.currentTarget.name;
-  }
 
   return (
     <Box
@@ -46,7 +42,7 @@ export function Header({ onChangeName, countCar }: THeaderProps) {
           name="/checkout"
           icon="cart"
           variant="secondary"
-          onClick={handleCart}
+          onClick={navigateOnButtonPress}
         />
         <Typography
           style={{

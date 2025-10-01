@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
+import data from "../../../../data.json";
 import { Container } from "../components/Container";
 import { Product } from "../components/Product";
-import { Typography, Box } from "@single-spa/ui-utils";
-import data from "../../../../data.json";
+import { Typography, Box, useStore } from "@single-spa/ui-utils";
 import { Header } from "../components/Header";
 
 type TProduct = {
@@ -16,50 +16,17 @@ type ResponseApi = {
   products: TProduct[];
 };
 
-type TOrder = TProduct & {
-  quantity: number;
-};
-
 export function Home() {
   const [products, setProducts] = useState<TProduct[]>([]);
-  const [order, setOrder] = useState<TOrder[]>([]);
   const [search, setSearch] = useState("");
+  const { order, addOrder, removeOrder } = useStore();
 
   function handleAddProduct(value: TProduct) {
-    const product = order.find((product) => product.name === value.name);
-
-    if (product) {
-      const newOrder = order.map((product) =>
-        product.name === value.name
-          ? { ...value, quantity: product.quantity + 1 }
-          : product
-      );
-      setOrder(newOrder);
-      return;
-    }
-
-    setOrder((prev) => [...prev, { ...value, quantity: 1 }]);
+    addOrder(value);
   }
 
   function handleRemoveProduct(value: TProduct) {
-    const product = order.find((product) => product.name === value.name);
-
-    if (product) {
-      const newOrder = order.map((product) => {
-        if (product.name === value.name) {
-          const shouldDeleteProduct = product.quantity - 1 === 0;
-
-          if (shouldDeleteProduct) {
-            return;
-          }
-
-          return { ...value, quantity: product.quantity - 1 };
-        }
-        return product;
-      });
-
-      setOrder(newOrder.filter((item) => item));
-    }
+    removeOrder(value.name);
   }
 
   async function fetchDefaultData() {
