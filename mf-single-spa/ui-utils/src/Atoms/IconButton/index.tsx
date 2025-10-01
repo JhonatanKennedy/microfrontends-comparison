@@ -1,11 +1,19 @@
 import { ButtonHTMLAttributes, CSSProperties } from "react";
-import { FaPlus, FaMinus, FaShoppingCart } from "react-icons/fa";
+import {
+  FaPlus,
+  FaMinus,
+  FaShoppingCart,
+  FaArrowLeft,
+  FaRegTrashAlt,
+} from "react-icons/fa";
 import { colors } from "../../theme";
 
 const iconMap = {
   plus: FaPlus,
   minus: FaMinus,
   cart: FaShoppingCart,
+  arrowLeft: FaArrowLeft,
+  trash: FaRegTrashAlt,
 };
 
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
@@ -13,6 +21,7 @@ type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   icon?: keyof typeof iconMap;
   iconPosition?: "start" | "end";
   hide?: boolean;
+  size?: number;
 };
 
 export function IconButton({
@@ -22,6 +31,7 @@ export function IconButton({
   iconPosition = "start",
   style,
   hide,
+  size = 16,
   ...props
 }: ButtonProps) {
   if (hide) return null;
@@ -65,9 +75,11 @@ export function IconButton({
       }}
       {...props}
     >
-      {IconComponent && iconPosition === "start" && <IconComponent size={16} />}
+      {IconComponent && iconPosition === "start" && (
+        <IconComponent size={size} />
+      )}
       {children}
-      {IconComponent && iconPosition === "end" && <IconComponent size={16} />}
+      {IconComponent && iconPosition === "end" && <IconComponent size={size} />}
     </button>
   );
 }
