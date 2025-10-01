@@ -1,16 +1,5 @@
-import React from "react";
 import { typography, colors } from "../../theme";
-
-type Variant = "h1" | "h2" | "body" | "caption";
-
-type Props = {
-  variant?: Variant;
-  component?: keyof JSX.IntrinsicElements;
-  children: React.ReactNode;
-  className?: string;
-  color?: "primary" | "secondary";
-  style?: React.CSSProperties;
-};
+import { TTypographyProps } from "mf-tgc-types";
 
 export function Typography({
   variant = "body",
@@ -20,7 +9,7 @@ export function Typography({
   className,
   color = "primary",
   ...rest
-}: Props) {
+}: TTypographyProps) {
   const t = typography[variant];
   const c = color === "secondary" ? colors.textSecondary : colors.textPrimary;
 

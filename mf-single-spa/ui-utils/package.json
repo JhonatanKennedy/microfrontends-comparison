@@ -41,6 +41,7 @@
     "@types/react-dom": "^18.2.0",
     "@types/systemjs": "^6.1.1",
     "@types/webpack-env": "^1.16.2",
+    "mf-tgc-types": "^0.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "^5.5.0",

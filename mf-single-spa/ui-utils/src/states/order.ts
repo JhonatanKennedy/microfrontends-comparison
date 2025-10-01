@@ -1,21 +1,7 @@
+import { TOrderStore } from "mf-tgc-types";
 import { create } from "zustand";
 
-type TOrder = {
-  name: string;
-  value: number;
-  description: string;
-  photoURL: string;
-  quantity: number;
-};
-
-type Store = {
-  order: TOrder[];
-  addOrder: (product: Omit<TOrder, "quantity">) => void;
-  removeOrder: (productName: string) => void;
-  deleteOrder: (productName: string) => void;
-};
-
-export const useStore = create<Store>()((set) => ({
+export const useStore = create<TOrderStore>()((set) => ({
   order: [],
   addOrder: (product) =>
     set((state) => {

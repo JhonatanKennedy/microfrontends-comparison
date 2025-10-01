@@ -1,10 +1,6 @@
 import React from "react";
 import { colors } from "../../theme";
-
-type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
-  variant?: "contained" | "outlined" | "text";
-  color?: "primary" | "secondary";
-};
+import { TButtonProps } from "mf-tgc-types";
 
 export function Button({
   children,
@@ -12,7 +8,7 @@ export function Button({
   color = "primary",
   className,
   ...props
-}: ButtonProps) {
+}: TButtonProps) {
   const baseStyle: React.CSSProperties = {
     padding: "8px 16px",
     borderRadius: "8px",

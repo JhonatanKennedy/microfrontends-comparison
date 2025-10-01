@@ -1,4 +1,4 @@
-import { ButtonHTMLAttributes, CSSProperties } from "react";
+import { CSSProperties } from "react";
 import {
   FaPlus,
   FaMinus,
@@ -7,6 +7,7 @@ import {
   FaRegTrashAlt,
 } from "react-icons/fa";
 import { colors } from "../../theme";
+import { TIconButtonProps } from "mf-tgc-types";
 
 const iconMap = {
   plus: FaPlus,
@@ -14,14 +15,6 @@ const iconMap = {
   cart: FaShoppingCart,
   arrowLeft: FaArrowLeft,
   trash: FaRegTrashAlt,
-};
-
-type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
-  variant?: "primary" | "secondary" | "outlined";
-  icon?: keyof typeof iconMap;
-  iconPosition?: "start" | "end";
-  hide?: boolean;
-  size?: number;
 };
 
 export function IconButton({
@@ -33,7 +26,7 @@ export function IconButton({
   hide,
   size = 16,
   ...props
-}: ButtonProps) {
+}: TIconButtonProps) {
   if (hide) return null;
 
   const IconComponent = icon ? iconMap[icon] : null;

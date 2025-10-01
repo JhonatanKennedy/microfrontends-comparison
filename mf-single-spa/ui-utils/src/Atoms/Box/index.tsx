@@ -1,8 +1,4 @@
-import { TBoxProps as TProps } from "interfaces";
-
-type TBoxProps = TProps & {
-  children?: React.ReactNode;
-};
+import { TBoxProps } from "mf-tgc-types";
 
 export function Box({
   children,

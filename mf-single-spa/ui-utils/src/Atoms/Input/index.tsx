@@ -1,12 +1,6 @@
+import { TInputProps } from "mf-tgc-types";
 import { colors } from "../../theme";
 import { useState, ChangeEvent } from "react";
-
-type TInputProps = {
-  defaultValue?: string;
-  name?: string;
-  onChangeName: (value: string) => void;
-  placeholder?: string;
-};
 
 export function Input({
   placeholder,
