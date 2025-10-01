@@ -1,48 +1,72 @@
-import { colors, Box } from "@single-spa/ui-utils";
 import {
-  ChangeEvent,
-  ChangeEventHandler,
-  InputHTMLAttributes,
-  useState,
-} from "react";
+  colors,
+  Box,
+  Input,
+  Typography,
+  IconButton,
+} from "@single-spa/ui-utils";
+import { MouseEvent } from "react";
 
 type THeaderProps = {
+  countCar: number;
   onChangeName: (value: string) => void;
 };
 
-export function Header({ onChangeName }: THeaderProps) {
-  const [value, setValue] = useState("");
+export function Header({ onChangeName, countCar }: THeaderProps) {
+  const count = countCar > 9 ? "9+" : String(countCar);
 
-  function handleChange(event: ChangeEvent<HTMLInputElement>) {
-    setValue(event.target.value);
-    onChangeName(event.target.value);
+  function handleCart(e: MouseEvent<HTMLButtonElement>) {
+    window.location.pathname = e.currentTarget.name;
   }
 
   return (
     <Box
-      justify="center"
+      justify="space-evenly"
+      align="center"
+      gap={12}
       style={{
         backgroundColor: colors.primary,
         padding: "30px 0px",
         width: "100%",
+        flexWrap: "wrap",
       }}
     >
-      <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-        <input
-          id="name"
-          type="text"
-          value={value}
-          placeholder="Digite o nome do prato"
-          onChange={handleChange}
-          style={{
-            padding: "10px 14px",
-            border: `1px solid ${colors.textSecondary}`,
-            borderRadius: "8px",
-            fontSize: "15px",
-            outline: "none",
-          }}
+      <Typography
+        component="span"
+        variant="h1"
+        style={{ color: colors.background }}
+      >
+        LOGO
+      </Typography>
+
+      <Input name="search" placeholder="Pesquisa" onChangeName={onChangeName} />
+
+      <Box style={{ position: "relative" }}>
+        <IconButton
+          name="/checkout"
+          icon="cart"
+          variant="secondary"
+          onClick={handleCart}
         />
-      </div>
+        <Typography
+          style={{
+            fontSize: "10px",
+            color: colors.background,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            position: "absolute",
+            backgroundColor: colors.error,
+            height: "15px",
+            width: "15px",
+            borderRadius: "50%",
+            top: -5,
+            right: -5,
+          }}
+        >
+          {count}
+        </Typography>
+      </Box>
     </Box>
   );
 }

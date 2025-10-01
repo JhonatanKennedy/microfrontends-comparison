@@ -80,9 +80,11 @@ export function Home() {
     product.name.toLowerCase().includes(search.toLowerCase())
   );
 
+  const countOrder = order.reduce((acc, product) => acc + product.quantity, 0);
+
   return (
     <Box direction="column" align="center">
-      <Header onChangeName={setSearch} />
+      <Header onChangeName={setSearch} countCar={countOrder} />
       <Box direction="column" style={{ width: "70%" }}>
         <Typography component="h1" variant="h1">
           Pratos
