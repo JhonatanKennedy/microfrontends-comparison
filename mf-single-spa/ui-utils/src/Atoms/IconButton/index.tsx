@@ -48,7 +48,7 @@ export function IconButton({
 
   const variantStyles: Record<string, CSSProperties> = {
     primary: { background: colors.primary, color: "#fff" },
-    secondary: { background: colors.secondary, color: "#fff" },
+    secondary: { background: colors.accent, color: "#fff" },
     outlined: {
       background: "transparent",
       border: `1px solid ${colors.primary}`,
