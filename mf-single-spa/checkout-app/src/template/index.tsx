@@ -2,14 +2,7 @@ import { Box, Typography, useStore } from "@single-spa/ui-utils";
 import { Header } from "../components/Header";
 import { Order } from "../components/Order";
 import { OrderResume } from "../components/OrderResume";
-
-type TOrder = {
-  name: string;
-  value: number;
-  description: string;
-  photoURL: string;
-  quantity: number;
-};
+import { TOrder } from "mf-tgc-types";
 
 const FIXED_FEE = 16;
 const FIXED_DISCOUNT = 2;

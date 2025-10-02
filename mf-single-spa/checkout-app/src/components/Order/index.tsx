@@ -5,15 +5,8 @@ import {
   colors,
   formatCurrency,
 } from "@single-spa/ui-utils";
+import { TOrder } from "mf-tgc-types";
 import { useState } from "react";
-
-type TOrder = {
-  name: string;
-  value: number;
-  description: string;
-  photoURL: string;
-  quantity: number;
-};
 
 type TOrderProps = TOrder & {
   onAddProduct: (value: TOrder) => void;

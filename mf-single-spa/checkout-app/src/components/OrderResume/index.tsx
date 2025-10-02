@@ -52,17 +52,17 @@ export function OrderResume({ subTotal, fee, discount }: OrderResumeProps) {
       <Typography variant="h1">Resumo</Typography>
 
       <Box direction="column" style={{ width: "100%" }}>
-        <Box justify="space-between" algin="center" style={{ width: "100%" }}>
+        <Box justify="space-between" align="center" style={{ width: "100%" }}>
           <Typography variant="h2">Subtotal</Typography>
           <Typography variant="h2">{formattedSubTotal}</Typography>
         </Box>
 
-        <Box justify="space-between" algin="center" style={{ width: "100%" }}>
+        <Box justify="space-between" align="center" style={{ width: "100%" }}>
           <Typography variant="h2">Taxas</Typography>
           <Typography variant="h2">{formattedFee}</Typography>
         </Box>
 
-        <Box justify="space-between" algin="center" style={{ width: "100%" }}>
+        <Box justify="space-between" align="center" style={{ width: "100%" }}>
           <Typography variant="h2">Desconto</Typography>
           <Typography variant="h2">{formattedDiscount}</Typography>
         </Box>
