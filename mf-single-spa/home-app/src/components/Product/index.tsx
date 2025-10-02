@@ -1,12 +1,6 @@
 import { IconButton, Typography, Box, colors } from "@single-spa/ui-utils";
+import { TProduct } from "mf-tgc-types";
 import { useState } from "react";
-
-type TProduct = {
-  name: string;
-  value: number;
-  description: string;
-  photoURL: string;
-};
 
 type TProductProps = TProduct & {
   onAddProduct: (value: TProduct) => void;

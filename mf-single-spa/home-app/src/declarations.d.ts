@@ -38,4 +38,31 @@ declare module "*.svg" {
   export default src;
 }
 
-declare module "@single-spa/ui-utils";
+declare module "@single-spa/ui-utils" {
+  import {
+    TTypographyProps,
+    TBoxProps,
+    TButtonProps,
+    TIconButtonProps,
+    TInputProps,
+    TConvertToPercentageFn,
+    TFormatCurrencyFn,
+    TNavigateOnButtonPressFn,
+    TOrderStore,
+    TColors,
+  } from "mf-tgc-types";
+
+  export const Typography: React.ComponentType<TTypographyProps>;
+  export const Box: React.ComponentType<TBoxProps>;
+  export const Button: React.ComponentType<TButtonProps>;
+  export const IconButton: React.ComponentType<TIconButtonProps>;
+  export const Input: React.ComponentType<TInputProps>;
+
+  export const convertToPercentage: TConvertToPercentageFn;
+  export const formatCurrency: TFormatCurrencyFn;
+  export const navigateOnButtonPress: TNavigateOnButtonPressFn;
+
+  export const colors: TColors;
+
+  export const useStore: () => TOrderStore;
+}

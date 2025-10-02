@@ -1,16 +1,10 @@
-import { useEffect, useState } from "react";
 import data from "../../../../data.json";
+import { useEffect, useState } from "react";
 import { Container } from "../components/Container";
 import { Product } from "../components/Product";
 import { Typography, Box, useStore } from "@single-spa/ui-utils";
 import { Header } from "../components/Header";
-
-type TProduct = {
-  name: string;
-  value: number;
-  description: string;
-  photoURL: string;
-};
+import { TProduct } from "mf-tgc-types";
 
 type ResponseApi = {
   products: TProduct[];
@@ -32,7 +26,7 @@ export function Home() {
   async function fetchDefaultData() {
     const response: ResponseApi = await new Promise((resolve) => {
       setTimeout(() => {
-        resolve(data as unknown as ResponseApi);
+        resolve(data as ResponseApi);
       }, 2000);
     });
 
