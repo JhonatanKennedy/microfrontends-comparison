@@ -1,10 +1,6 @@
-import { TBoxProps as TProps } from "interfaces";
+import { TBoxProps } from "mf-tgc-types";
 
-type TBoxProps = TProps & {
-  children?: React.ReactNode;
-};
-
-export default function Box({
+export function Box({
   children,
   direction = "row",
   gap = 8,

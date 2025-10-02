@@ -1,4 +1,3 @@
-const path = require("path");
 const ModuleFederationPlugin = require("webpack/lib/container/ModuleFederationPlugin");
 
 module.exports = {
@@ -6,9 +5,6 @@ module.exports = {
   entry: "./src/index",
   resolve: {
     extensions: [".ts", ".tsx", ".js", ".jsx"],
-    alias: {
-      interfaces: path.resolve(__dirname, "../../interfaces/src"),
-    },
   },
   output: {
     publicPath: "http://localhost:7000/",
@@ -30,9 +26,7 @@ module.exports = {
       name: "uiUtils",
       filename: "remoteEntry.js",
       exposes: {
-        "./Button": "./src/Button",
-        "./Box": "./src/Box",
-        "./Icon": "./src/Icon",
+        ".": "./src",
       },
       shared: {
         react: {
