@@ -10,11 +10,9 @@
     "strict": true,
     "jsx": "react-jsx",
     "baseUrl": ".",
-    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
     "paths": {
-      "@/*": ["./src/*"],
-      "interfaces": ["../../interfaces/src/index"],
-      "interfaces/*": ["../../interfaces/src/*"]
+      "./*": ["./src/*"]
     }
   },
   "include": ["src"],
