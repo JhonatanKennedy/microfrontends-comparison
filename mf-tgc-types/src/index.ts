@@ -3,6 +3,7 @@ export * from "./ui/icon-button";
 export * from "./ui/button";
 export * from "./ui/input";
 export * from "./ui/typography";
+export * from "./ui/colors";
 
 export * from "./business/order";
 export * from "./business/product";
