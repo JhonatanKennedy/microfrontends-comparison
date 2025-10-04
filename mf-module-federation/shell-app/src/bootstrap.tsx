@@ -1,24 +1,17 @@
-import { Suspense, lazy } from "react";
 import { createRoot } from "react-dom/client";
-
-const Home = lazy(() => import("homeApp/Home"));
-
-function App() {
-  //TODO trazer um react router dom pra um arquivo proximo e importar aqui
-  return (
-    <div>
-      <Suspense fallback={<div>Loading...</div>}>
-        <Home />
-      </Suspense>
-    </div>
-  );
-}
+import { RouterProvider } from "react-router";
+import { router } from "./routes";
+import { StrictMode } from "react";
 
 const container = document.getElementById("root");
 
 if (container) {
   const root = createRoot(container);
-  root.render(<App />);
+  root.render(
+    <StrictMode>
+      <RouterProvider router={router} />
+    </StrictMode>
+  );
 } else {
   console.error("Elemento com ID 'root' não encontrado no DOM.");
 }

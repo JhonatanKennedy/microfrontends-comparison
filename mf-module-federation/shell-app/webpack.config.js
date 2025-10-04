@@ -12,6 +12,7 @@ module.exports = {
   },
   devServer: {
     port: 9000,
+    historyApiFallback: true,
   },
   module: {
     rules: [
@@ -30,6 +31,7 @@ module.exports = {
       name: "shell",
       remotes: {
         homeApp: "homeApp@http://localhost:8001/remoteEntry.js",
+        checkoutApp: "checkoutApp@http://localhost:8002/remoteEntry.js",
       },
       shared: {
         react: {
@@ -39,6 +41,11 @@ module.exports = {
         "react-dom": {
           singleton: true,
           requiredVersion: "^18.2.0",
+        },
+        "react-router": {
+          singleton: true,
+          requiredVersion: "^7.9.3",
+          eager: false,
         },
       },
     }),
