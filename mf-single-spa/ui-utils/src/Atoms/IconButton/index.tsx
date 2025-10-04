@@ -61,6 +61,7 @@ export function IconButton({
 
   return (
     <button
+      aria-label={`icon-button-${icon}`}
       style={{
         ...baseStyle,
         ...variantStyles[variant],

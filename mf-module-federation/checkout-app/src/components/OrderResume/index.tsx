@@ -74,7 +74,9 @@ export function OrderResume({ subTotal, fee, discount }: OrderResumeProps) {
           <Typography variant="h2">{formattedTotalValue}</Typography>
         </Box>
 
-        <Button onClick={handleClickBuy}>Comprar</Button>
+        <Button onClick={handleClickBuy} aria-label="button-checkout">
+          Comprar
+        </Button>
       </Box>
     </Box>
   );

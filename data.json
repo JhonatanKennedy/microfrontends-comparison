@@ -4,13 +4,13 @@
       "name": "Bolo de Rolo",
       "value": 45.5,
       "description": "Finas camadas de pão de ló enroladas com um delicioso recheio de goiabada. Patrimônio cultural de Pernambuco.",
-      "photoURL": "https://raw.githubusercontent.com/JhonatanKennedy/microfrontends-comparison/refs/heads/master/photo-static-server/bolo-de-rolo.png"
+      "photoURL": "https://raw.githubusercontent.com/JhonatanKennedy/microfrontends-comparison/refs/heads/master/photo-static-server/bolo-de-rolo.jpg"
     },
     {
       "name": "Tapioca de Queijo Coalho",
       "value": 18.0,
       "description": "Goma de tapioca crocante recheada com queijo coalho tostado na chapa.",
-      "photoURL": "https://raw.githubusercontent.com/JhonatanKennedy/microfrontends-comparison/refs/heads/master/photo-static-server/tapioca.jpeg"
+      "photoURL": "https://raw.githubusercontent.com/JhonatanKennedy/microfrontends-comparison/refs/heads/master/photo-static-server/tapioca.jpg"
     },
     {
       "name": "Moqueca de Camarão",
