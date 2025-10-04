@@ -60,7 +60,6 @@ declare module "uiUtils" {
 
   export const convertToPercentage: TConvertToPercentageFn;
   export const formatCurrency: TFormatCurrencyFn;
-  export const navigateOnButtonPress: TNavigateOnButtonPressFn;
 
   export const colors: TColors;
 

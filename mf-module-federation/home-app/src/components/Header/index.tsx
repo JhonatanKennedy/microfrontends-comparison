@@ -1,11 +1,6 @@
-import {
-  colors,
-  Box,
-  Input,
-  Typography,
-  IconButton,
-  navigateOnButtonPress,
-} from "uiUtils";
+import { colors, Box, Input, Typography, IconButton } from "uiUtils";
+import { useNavigate } from "react-router";
+import { MouseEvent } from "react";
 
 type THeaderProps = {
   countCar: number;
@@ -13,7 +8,13 @@ type THeaderProps = {
 };
 
 export function Header({ onChangeName, countCar }: THeaderProps) {
+  const navigate = useNavigate();
+
   const count = countCar > 9 ? "9+" : String(countCar);
+
+  function navigateOnButtonPress(e: MouseEvent<HTMLButtonElement>) {
+    navigate(e.currentTarget.name);
+  }
 
   return (
     <Box
