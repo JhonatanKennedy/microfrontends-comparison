@@ -57,9 +57,10 @@ export function Order({
     <Box style={{ width: "100%" }}>
       <Box style={{ width: "20%" }}>
         <img
-          src={require(`../../../public/assets/${photoURL}`)}
+          src={photoURL}
           width="100%"
           height="100px"
+          alt={`photo-${name}`}
           style={{ objectFit: "cover" }}
         />
       </Box>

@@ -35,9 +35,10 @@ export function Product({
   return (
     <Box direction="column" align="center">
       <img
-        src={require(`../../../public/assets/${photoURL}`)}
+        src={photoURL}
         width="100%"
         height="100px"
+        alt={`photo-${name}`}
         style={{ objectFit: "cover" }}
       />
 
