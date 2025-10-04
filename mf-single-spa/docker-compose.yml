@@ -8,3 +8,13 @@ services:
     build: ./home-app
     ports:
       - "8001:80"
+
+  checkout-app:
+    build: ./checkout-app
+    ports:
+      - "8002:80"
+
+  ui-utils:
+    build: ./ui-utils
+    ports:
+      - "7000:80"

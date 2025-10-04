@@ -2,14 +2,7 @@
   "extends": "ts-config-single-spa",
   "compilerOptions": {
     "jsx": "react-jsx",
-    "declarationDir": "dist",
-    "baseUrl": ".",
-    "allowSyntheticDefaultImports": true,
-    "paths": {
-      "@/*": ["./src/*"],
-      "interfaces": ["../../interfaces/src/index"],
-      "interfaces/*": ["../../interfaces/src/*"]
-    }
+    "declarationDir": "dist"
   },
   "files": ["src/single-spa-ui-utils.tsx"],
   "include": ["src/**/*"],
