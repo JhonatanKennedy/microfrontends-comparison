@@ -1,9 +1,10 @@
 {
-  "name": "ui-utils",
+  "name": "ui_utils",
   "version": "1.0.0",
   "scripts": {
-    "start": "webpack serve --mode development",
-    "build": "webpack --mode production"
+    "dev": "rsbuild dev --open",
+    "build": "rsbuild build",
+    "preview": "rsbuild preview"
   },
   "dependencies": {
     "react": "^18.2.0",
@@ -12,18 +13,12 @@
     "zustand": "^5.0.8"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.0",
-    "@babel/preset-react": "^7.20.0",
-    "@types/node": "^24.5.2",
+    "@rsbuild/core": "^1.2.15",
+    "@rsbuild/plugin-react": "^1.1.1",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
-    "babel-loader": "^9.1.0",
-    "html-webpack-plugin": "^5.5.0",
-    "mf-tgc-types": "^0.0.3",
-    "ts-loader": "^9.5.4",
     "typescript": "^5.9.2",
-    "webpack": "^5.75.0",
-    "webpack-cli": "^5.0.0",
-    "webpack-dev-server": "^4.11.0"
+    "@module-federation/rsbuild-plugin": "^0.19.1",
+    "mf-tgc-types": "^0.0.3"
   }
 }

@@ -1,31 +1,24 @@
 {
-  "name": "home-app",
+  "name": "checkout_app",
+  "private": true,
   "version": "1.0.0",
   "scripts": {
-    "start": "webpack serve --mode development",
-    "build": "webpack --mode production"
+    "dev": "rsbuild dev --open",
+    "build": "rsbuild build",
+    "preview": "rsbuild preview"
   },
   "dependencies": {
-    "axios": "^1.6.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router": "^7.9.3"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.0",
-    "@babel/preset-react": "^7.20.0",
-    "@types/node": "^24.5.2",
+    "@rsbuild/core": "^1.2.15",
+    "@rsbuild/plugin-react": "^1.1.1",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
-    "babel-loader": "^9.1.0",
-    "css-loader": "^7.1.2",
-    "html-webpack-plugin": "^5.5.0",
-    "mf-tgc-types": "^0.0.3",
-    "style-loader": "^4.0.0",
-    "ts-loader": "^9.5.4",
-    "typescript": "^5.9.2",
-    "webpack": "^5.75.0",
-    "webpack-cli": "^5.0.0",
-    "webpack-dev-server": "^4.11.0"
+    "typescript": "^5.7.2",
+    "@module-federation/rsbuild-plugin": "^0.19.1",
+    "mf-tgc-types": "^0.0.3"
   }
 }
