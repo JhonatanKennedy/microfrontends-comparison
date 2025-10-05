@@ -42,6 +42,14 @@ export function Home() {
     product.name.toLowerCase().includes(search.toLowerCase())
   );
 
+  function hasOrderQuantity(product: TProduct) {
+    const prod = order.find((o) => o.name === product.name);
+    if (prod) {
+      return prod.quantity;
+    }
+    return 0;
+  }
+
   const countOrder = order.reduce((acc, product) => acc + product.quantity, 0);
 
   return (
@@ -61,6 +69,7 @@ export function Home() {
               photoURL={product.photoURL}
               onAddProduct={handleAddProduct}
               onRemoveProduct={handleRemoveProduct}
+              quantity={hasOrderQuantity(product)}
             />
           ))}
         </Container>

@@ -5,6 +5,7 @@ import { useState } from "react";
 type TProductProps = TProduct & {
   onAddProduct: (value: TProduct) => void;
   onRemoveProduct: (value: TProduct) => void;
+  quantity?: number;
 };
 
 export function Product({
@@ -14,8 +15,9 @@ export function Product({
   value,
   onAddProduct,
   onRemoveProduct,
+  quantity: qty,
 }: TProductProps) {
-  const [quantity, setQuantity] = useState(0);
+  const [quantity, setQuantity] = useState(qty ?? 0);
 
   const formattedValue = new Intl.NumberFormat("pt-BR", {
     style: "currency",
