@@ -121,7 +121,7 @@ measure_build() {
     echo -e "${BLUE}Finishing build at $(date +%H:%M:%S.%3N)${NC}" >&2
     
     BUILD_TIME_MS=$((END_TIME - START_TIME))
-    BUILD_TIME=$(echo "scale=3; $BUILD_TIME_MS / 1000" | bc -l)
+    BUILD_TIME=$(awk -v ms="$BUILD_TIME_MS" 'BEGIN {printf "%.3f", ms / 1000}')
     
     if [ $BUILD_EXIT_CODE -ne 0 ]; then
         echo -e "${RED}Build ERROR! Exit code: $BUILD_EXIT_CODE${NC}" >&2
@@ -163,23 +163,41 @@ measure_build() {
 
 calculate_average() {
     local times=("$@")
-    local sum=0
-    local count=0
     
-    for time in "${times[@]}"; do
-        if [[ "$time" =~ ^[0-9]+\.?[0-9]*$ ]] && (( $(echo "$time > 0" | bc -l) )); then
-            sum=$(echo "$sum + $time" | bc -l)
-            count=$((count + 1))
-        else
-            echo -e "${YELLOW}WARNING: Invalid time ignored: $time${NC}" >&2
-        fi
-    done
+    echo -e "${YELLOW}DEBUG: Calculating average from: ${times[*]}${NC}" >&2
     
-    if [ $count -gt 0 ]; then
-        echo "scale=3; $sum / $count" | bc -l
-    else
-        echo "0"
-    fi
+    # Use awk for all calculations to avoid locale issues
+    local avg=$(awk -v times="${times[*]}" '
+    BEGIN {
+        sum = 0
+        count = 0
+        split(times, arr, " ")
+        
+        for (i in arr) {
+            val = arr[i]
+            # Clean leading zeros and convert .xxx to 0.xxx
+            gsub(/^0+/, "", val)
+            if (val ~ /^\./) val = "0" val
+            
+            if (val ~ /^[0-9]*\.?[0-9]+$/ && val > 0) {
+                sum += val
+                count++
+                printf "DEBUG: Added %s to sum. Current sum: %.3f, count: %d\n", val, sum, count > "/dev/stderr"
+            }
+        }
+        
+        if (count > 0) {
+            avg = sum / count
+            printf "DEBUG: Final average: %.3f (sum=%.3f, count=%d)\n", avg, sum, count > "/dev/stderr"
+            printf "%.3f", avg
+        } else {
+            print "DEBUG: No valid times to average!" > "/dev/stderr"
+            print "0.000"
+        }
+    }')
+    
+    echo -e "${GREEN}$avg${NC}" >&2
+    echo "$avg"
 }
 
 benchmark_project() {
@@ -244,7 +262,8 @@ benchmark_project() {
     print_both "  Total files: ${files[0]}"
     print_both "  JS chunks: ${chunks[0]}"
     
-    echo "$avg_time"
+    # Return ONLY the average, nothing else
+    echo "$avg_time" | tr -cd '0-9.'
 }
 
 benchmark_architecture() {
@@ -259,30 +278,61 @@ benchmark_architecture() {
     print_both "########################################" "$BLUE"
     print_both ""
     
-    local total_time=0
+    local -a averages=()
     local app_count=0
     
     for app in "${apps[@]}"; do
         local app_path="$base_path/$app"
         if [ -d "$app_path" ]; then
-            app_time=$(benchmark_project "$arch_name - $app" "$app_path")
-            app_time_clean=$(echo "$app_time" | sed 's/\x1b\[[0-9;]*m//g' | tr -cd '0-9.' | grep -oE '^[0-9]+\.?[0-9]*' || echo "0")
+            echo -e "${YELLOW}DEBUG: Starting benchmark for $app${NC}" >&2
             
-            if [[ "$app_time_clean" =~ ^[0-9]+\.?[0-9]*$ ]] && (( $(echo "$app_time_clean > 0" | bc -l) )); then
-                total_time=$(echo "scale=3; $total_time + $app_time_clean" | bc -l)
-                app_count=$((app_count + 1))
+            # Capture ONLY stdout from benchmark_project
+            app_avg_time=$(benchmark_project "$arch_name - $app" "$app_path" 2>&1 | tail -1)
+            
+            echo -e "${YELLOW}DEBUG: Raw output from benchmark_project: '$app_avg_time'${NC}" >&2
+            
+            # Clean the value
+            app_avg_clean=$(echo "$app_avg_time" | tr -cd '0-9.')
+            
+            echo -e "${YELLOW}DEBUG: Cleaned average from $app: '$app_avg_clean'${NC}" >&2
+            
+            if [[ "$app_avg_clean" =~ ^[0-9]+\.?[0-9]*$ ]]; then
+                is_positive=$(awk -v t="$app_avg_clean" 'BEGIN {print (t > 0) ? 1 : 0}')
+                
+                if [ "$is_positive" -eq 1 ]; then
+                    averages+=("$app_avg_clean")
+                    app_count=$((app_count + 1))
+                    echo -e "${YELLOW}DEBUG: Stored average $app_avg_clean for $app${NC}" >&2
+                else
+                    print_both "WARNING: Invalid time for $app: $app_avg_clean (not positive)" "$YELLOW"
+                fi
             else
-                print_both "WARNING: Invalid time for $app: $app_time_clean" "$YELLOW"
+                print_both "WARNING: Invalid time format for $app: $app_avg_clean" "$YELLOW"
             fi
         else
             print_both "WARNING: $app not found at $app_path" "$YELLOW"
         fi
     done
     
+    local total_time="0.000"
+    if [ ${#averages[@]} -gt 0 ]; then
+        echo -e "${YELLOW}DEBUG: Summing averages: ${averages[*]}${NC}" >&2
+        total_time=$(awk -v avgs="${averages[*]}" '
+        BEGIN {
+            sum = 0
+            split(avgs, arr, " ")
+            for (i in arr) {
+                sum += arr[i]
+            }
+            printf "%.3f", sum
+        }')
+        echo -e "${YELLOW}DEBUG: Total sum of averages: $total_time${NC}" >&2
+    fi
+    
     if [ $app_count -gt 0 ]; then
         print_both ""
         print_both ">>> TOTAL $arch_name <<<" "$GREEN"
-        print_both "  Total build time: ${total_time}s"
+        print_both "  Total average build time: ${total_time}s"
         print_both "  Applications: $app_count"
         print_both ""
     fi
@@ -328,16 +378,21 @@ main() {
         spa_clean="0"
     fi
     
-    if (( $(echo "$mf_clean > 0" | bc -l) )) && (( $(echo "$spa_clean > 0" | bc -l) )); then
-        diff=$(echo "scale=2; (($mf_clean - $spa_clean) / $spa_clean) * 100" | bc -l)
-        abs_diff=$(echo "scale=2; $mf_clean - $spa_clean" | bc -l)
+    mf_positive=$(awk -v t="$mf_clean" 'BEGIN {print (t > 0) ? 1 : 0}')
+    spa_positive=$(awk -v t="$spa_clean" 'BEGIN {print (t > 0) ? 1 : 0}')
+    
+    if [ "$mf_positive" -eq 1 ] && [ "$spa_positive" -eq 1 ]; then
+        diff=$(awk -v m="$mf_clean" -v s="$spa_clean" 'BEGIN {printf "%.2f", ((m - s) / s) * 100}')
+        abs_diff=$(awk -v m="$mf_clean" -v s="$spa_clean" 'BEGIN {printf "%.3f", m - s}')
         
-        print_both "Module Federation (total): ${mf_clean}s"
-        print_both "Single-SPA (total): ${spa_clean}s"
+        print_both "Module Federation (sum of averages): ${mf_clean}s"
+        print_both "Single-SPA (sum of averages): ${spa_clean}s"
         print_both "Absolute difference: ${abs_diff}s"
         print_both ""
         
-        if (( $(echo "$mf_clean > $spa_clean" | bc -l) )); then
+        mf_slower=$(awk -v m="$mf_clean" -v s="$spa_clean" 'BEGIN {print (m > s) ? 1 : 0}')
+        
+        if [ "$mf_slower" -eq 1 ]; then
             print_both "Module Federation is ${diff#-}% slower" "$YELLOW"
         else
             print_both "Module Federation is ${diff#-}% faster" "$GREEN"
@@ -354,6 +409,11 @@ main() {
 
 if ! command -v bc &> /dev/null; then
     echo -e "${RED}ERROR: 'bc' is not installed. Install with: sudo apt install bc${NC}"
+    exit 1
+fi
+
+if ! command -v awk &> /dev/null; then
+    echo -e "${RED}ERROR: 'awk' is not installed.${NC}"
     exit 1
 fi
 
