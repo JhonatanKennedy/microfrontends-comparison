@@ -4,7 +4,8 @@
   "scripts": {
     "dev": "rsbuild dev",
     "build": "rsbuild build",
-    "preview": "rsbuild preview"
+    "preview": "rsbuild preview",
+    "build:preview": "BUNDLE_ANALYZE=true npm run build"
   },
   "dependencies": {
     "react": "^18.2.0",

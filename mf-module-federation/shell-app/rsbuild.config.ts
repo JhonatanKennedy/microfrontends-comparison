@@ -14,4 +14,12 @@ export default defineConfig({
   output: {
     assetPrefix: "http://localhost:9000/",
   },
+  performance: {
+    bundleAnalyze: process.env.BUNDLE_ANALYZE
+      ? {
+          analyzerMode: "static",
+          openAnalyzer: true,
+        }
+      : undefined,
+  },
 });
