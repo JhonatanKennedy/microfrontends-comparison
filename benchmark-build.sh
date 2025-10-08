@@ -10,42 +10,31 @@ NC='\033[0m'
 
 RUNS=5
 
+# Define output directory for results
 REPORTS_DIR="reports/build"
 
+# Create reports directory if it doesn't exist
 mkdir -p "$REPORTS_DIR"
 
-RESULTS_FILE="${REPORTS_DIR}/benchmark_results_$(date +%Y%m%d_%H%M%S).txt"
+RESULTS_FILE="${REPORTS_DIR}/benchmark_results_$(date +%Y%m%d_%H%M%S).md"
 
 print_both() {
     local text="$1"
     local color="${2:-$NC}"
-    echo -e "${color}${text}${NC}"
+    
+    # Only use colors for terminal output (stderr), not for file
+    echo -e "${color}${text}${NC}" >&2
+    
+    # Write plain text to file (no color codes)
     echo "$text" >> "$RESULTS_FILE"
 }
 
 > "$RESULTS_FILE"
 
-print_both "====================================="
-print_both "  MICROFRONTENDS BENCHMARK"
-print_both "====================================="
+print_both "# Microfrontends Benchmark Report"
 print_both ""
-
-show_system_info() {
-    print_both "=== SYSTEM INFORMATION ===" "$BLUE"
-    print_both "Date: $(date)"
-    print_both "Node.js: $(node --version)"
-    print_both "npm: $(npm --version)"
-    
-    if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-        print_both "CPU: $(cat /proc/cpuinfo | grep "model name" | head -1 | cut -d: -f2 | xargs)"
-        print_both "RAM: $(free -h | grep Mem | awk '{print $2}')"
-    elif [[ "$OSTYPE" == "darwin"* ]]; then
-        print_both "CPU: $(sysctl -n machdep.cpu.brand_string)"
-        print_both "RAM: $(sysctl -n hw.memsize | awk '{print $0/1024/1024/1024 " GB"}')"
-    fi
-    
-    print_both ""
-}
+print_both "## System Information"
+print_both ""
 
 clean_cache() {
     local project_path=$1
@@ -244,9 +233,7 @@ benchmark_project() {
     local project_path=$2
     
     print_both "" 
-    print_both "================================" "$BLUE"
-    print_both "  TESTING: $project_name" "$BLUE"
-    print_both "================================" "$BLUE"
+    print_both "### $project_name"
     print_both ""
     
     if [ ! -d "$project_path" ]; then
@@ -273,6 +260,9 @@ benchmark_project() {
     local files=()
     local chunks=()
     
+    print_both "| Run | Time | Bundle Size | Files | JS Chunks |"
+    print_both "|-----|------|-------------|-------|-----------|"
+    
     for i in $(seq 1 $RUNS); do
         clean_cache "$project_path"
         
@@ -285,7 +275,7 @@ benchmark_project() {
         files+=("$file_count")
         chunks+=("$chunk_count")
         
-        print_both "  Run $i: ${time}s | ${size} | ${file_count} files | ${chunk_count} JS chunks"
+        print_both "| $i | ${time}s | ${size} | ${file_count} | ${chunk_count} |"
         
         restore_config "$project_path"
         
@@ -293,7 +283,8 @@ benchmark_project() {
     done
     
     print_both ""
-    print_both "AVERAGE RESULTS:" "$GREEN"
+    print_both "**Results:**"
+    print_both ""
     
     avg_time=$(calculate_average "${times[@]}")
     stddev_time=$(calculate_stddev "$avg_time" "${times[@]}")
@@ -304,10 +295,10 @@ benchmark_project() {
         else print "0.0"
     }')
     
-    print_both "  Average time: ${avg_time}s ± ${stddev_time}s (CV: ${cv}%)"
-    print_both "  Bundle size: ${sizes[0]}"
-    print_both "  Total files: ${files[0]}"
-    print_both "  JS chunks: ${chunks[0]}"
+    print_both "- **Average time:** ${avg_time}s ± ${stddev_time}s (CV: ${cv}%)"
+    print_both "- **Bundle size:** ${sizes[0]}"
+    print_both "- **Total files:** ${files[0]}"
+    print_both "- **JS chunks:** ${chunks[0]}"
     
     # Return ONLY the average, nothing else
     echo "$avg_time" | tr -cd '0-9.'
@@ -320,9 +311,9 @@ benchmark_architecture() {
     local apps=("$@")
     
     print_both ""
-    print_both "########################################" "$BLUE"
-    print_both "  ARCHITECTURE: $arch_name" "$BLUE"
-    print_both "########################################" "$BLUE"
+    print_both "---"
+    print_both ""
+    print_both "## $arch_name"
     print_both ""
     
     local -a averages=()
@@ -378,9 +369,12 @@ benchmark_architecture() {
     
     if [ $app_count -gt 0 ]; then
         print_both ""
-        print_both ">>> TOTAL $arch_name <<<" "$GREEN"
-        print_both "  Total average build time: ${total_time}s"
-        print_both "  Applications: $app_count"
+        print_both "### Summary"
+        print_both ""
+        print_both "| Metric | Value |"
+        print_both "|--------|-------|"
+        print_both "| **Total average build time** | ${total_time}s |"
+        print_both "| **Applications tested** | $app_count |"
         print_both ""
     fi
     
@@ -388,30 +382,26 @@ benchmark_architecture() {
 }
 
 main() {
-    show_system_info
-    
-    print_both "Number of runs per project: $RUNS" "$YELLOW"
-    print_both ""
-    
+    print_both "- Sistema: $(uname -s) $(uname -r)"
+    print_both "- Node.js: $(node --version)"
+    print_both "- npm: $(npm --version)"
+    print_both "- CPU: $(cat /proc/cpuinfo | grep "model name" | head -1 | cut -d: -f2 | xargs)"
+    print_both "- RAM: $(free -h | grep Mem | awk '{print $2}')"
+    print_both "- Runs per project: $RUNS"
+
     APPS=("shell-app" "checkout-app" "home-app" "ui-utils")
     
     MF_BASE="./mf-module-federation"
     SPA_BASE="./mf-single-spa"
     
-    print_both "=====================================" "$YELLOW"
-    print_both "  STARTING: MODULE FEDERATION" "$YELLOW"
-    print_both "=====================================" "$YELLOW"
     mf_time=$(benchmark_architecture "Module Federation" "$MF_BASE" "${APPS[@]}")
     
-    print_both "=====================================" "$YELLOW"
-    print_both "  STARTING: SINGLE-SPA" "$YELLOW"
-    print_both "=====================================" "$YELLOW"
     spa_time=$(benchmark_architecture "Single-SPA" "$SPA_BASE" "${APPS[@]}")
     
     print_both ""
-    print_both "=====================================" "$BLUE"
-    print_both "  FINAL OVERALL COMPARISON" "$BLUE"
-    print_both "=====================================" "$BLUE"
+    print_both "---"
+    print_both ""
+    print_both "## Final Comparison"
     print_both ""
     
     mf_clean=$(echo "$mf_time" | sed 's/\x1b\[[0-9;]*m//g' | tr -cd '0-9.' | grep -oE '^[0-9]+\.?[0-9]*' || echo "0")
@@ -431,27 +421,28 @@ main() {
     if [ "$mf_positive" -eq 1 ] && [ "$spa_positive" -eq 1 ]; then
         diff=$(awk -v m="$mf_clean" -v s="$spa_clean" 'BEGIN {printf "%.2f", ((m - s) / s) * 100}')
         abs_diff=$(awk -v m="$mf_clean" -v s="$spa_clean" 'BEGIN {printf "%.3f", m - s}')
+        diff_abs=$(awk -v d="$diff" 'BEGIN {print (d < 0) ? -d : d}')
+        abs_diff_abs=$(awk -v d="$abs_diff" 'BEGIN {print (d < 0) ? -d : d}')
         
-        print_both "Module Federation (sum of averages): ${mf_clean}s"
-        print_both "Single-SPA (sum of averages): ${spa_clean}s"
-        print_both "Absolute difference: ${abs_diff}s"
+        print_both "| Architecture | Total Time |"
+        print_both "|--------------|------------|"
+        print_both "| **Module Federation** | ${mf_clean}s"
+        print_both "| **Single-SPA** | ${spa_clean}s"
         print_both ""
-        
-        mf_slower=$(awk -v m="$mf_clean" -v s="$spa_clean" 'BEGIN {print (m > s) ? 1 : 0}')
-        
-        if [ "$mf_slower" -eq 1 ]; then
-            print_both "Module Federation is ${diff#-}% slower" "$YELLOW"
-        else
-            print_both "Module Federation is ${diff#-}% faster" "$GREEN"
-        fi
+        print_both "### Analysis"
+        print_both ""
+        print_both "- **Absolute difference:** ${abs_diff_abs}s"
+        print_both "- **Percentage difference:** ${diff_abs}%"
     else
-        print_both "ERROR: Could not calculate comparison (MF=$mf_clean, SPA=$spa_clean)" "$RED"
+        print_both "**Error:** Could not calculate comparison (MF=$mf_clean, SPA=$spa_clean)"
     fi
     
     print_both ""
-    print_both "=====================================" "$GREEN"
-    print_both "Results saved to: $RESULTS_FILE" "$GREEN"
-    print_both "=====================================" "$GREEN"
+    print_both "---"
+    print_both ""
+    print_both "*Report generated on $(date)*"
+    print_both ""
+    print_both "📊 Results saved to: \`$RESULTS_FILE\`"
 }
 
 if ! command -v bc &> /dev/null; then
