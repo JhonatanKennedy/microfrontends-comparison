@@ -1,0 +1,181 @@
+=====================================
+  MICROFRONTENDS BENCHMARK
+=====================================
+
+=== SYSTEM INFORMATION ===
+Date: ter 07 out 2025 22:06:59 -03
+Node.js: v24.8.0
+npm: 11.6.0
+CPU: AMD Ryzen 7 7700X 8-Core Processor
+RAM: 30Gi
+
+Number of runs per project: 5
+
+=====================================
+  STARTING: MODULE FEDERATION
+=====================================
+
+########################################
+  ARCHITECTURE: Module Federation
+########################################
+
+
+================================
+  TESTING: Module Federation - shell-app
+================================
+
+  Run 1: 0.413s | 432K | 13 files | 5 JS chunks
+  Run 2: 0.408s | 432K | 13 files | 5 JS chunks
+  Run 3: 0.400s | 432K | 13 files | 5 JS chunks
+  Run 4: 0.402s | 432K | 13 files | 5 JS chunks
+  Run 5: 0.426s | 432K | 13 files | 5 JS chunks
+
+AVERAGE RESULTS:
+  Average time: 0.410s ± 0.009s (CV: 2.2%)
+  Bundle size: 432K
+  Total files: 13
+  JS chunks: 5
+
+================================
+  TESTING: Module Federation - checkout-app
+================================
+
+  Run 1: 0.379s | 544K | 18 files | 7 JS chunks
+  Run 2: 0.410s | 544K | 18 files | 7 JS chunks
+  Run 3: 0.410s | 544K | 18 files | 7 JS chunks
+  Run 4: 0.413s | 544K | 18 files | 7 JS chunks
+  Run 5: 0.417s | 544K | 18 files | 7 JS chunks
+
+AVERAGE RESULTS:
+  Average time: 0.406s ± 0.014s (CV: 3.4%)
+  Bundle size: 544K
+  Total files: 18
+  JS chunks: 7
+
+================================
+  TESTING: Module Federation - home-app
+================================
+
+  Run 1: 0.394s | 544K | 18 files | 7 JS chunks
+  Run 2: 0.412s | 544K | 18 files | 7 JS chunks
+  Run 3: 0.417s | 544K | 18 files | 7 JS chunks
+  Run 4: 0.414s | 544K | 18 files | 7 JS chunks
+  Run 5: 0.420s | 544K | 18 files | 7 JS chunks
+
+AVERAGE RESULTS:
+  Average time: 0.411s ± 0.009s (CV: 2.2%)
+  Bundle size: 544K
+  Total files: 18
+  JS chunks: 7
+
+================================
+  TESTING: Module Federation - ui-utils
+================================
+
+  Run 1: 0.393s | 344K | 15 files | 7 JS chunks
+  Run 2: 0.393s | 344K | 15 files | 7 JS chunks
+  Run 3: 0.397s | 344K | 15 files | 7 JS chunks
+  Run 4: 0.406s | 344K | 15 files | 7 JS chunks
+  Run 5: 0.402s | 344K | 15 files | 7 JS chunks
+
+AVERAGE RESULTS:
+  Average time: 0.398s ± 0.005s (CV: 1.3%)
+  Bundle size: 344K
+  Total files: 15
+  JS chunks: 7
+
+>>> TOTAL Module Federation <<<
+  Total average build time: 1.625s
+  Applications: 4
+
+=====================================
+  STARTING: SINGLE-SPA
+=====================================
+
+########################################
+  ARCHITECTURE: Single-SPA
+########################################
+
+
+================================
+  TESTING: Single-SPA - shell-app
+================================
+
+  Run 1: 1.283s | 64K | 4 files | 1 JS chunks
+  Run 2: 1.294s | 64K | 4 files | 1 JS chunks
+  Run 3: 1.294s | 64K | 4 files | 1 JS chunks
+  Run 4: 1.297s | 64K | 4 files | 1 JS chunks
+  Run 5: 1.290s | 64K | 4 files | 1 JS chunks
+
+AVERAGE RESULTS:
+  Average time: 1.292s ± 0.005s (CV: 0.4%)
+  Bundle size: 64K
+  Total files: 4
+  JS chunks: 1
+
+================================
+  TESTING: Single-SPA - checkout-app
+================================
+
+  Run 1: 1.641s | 108K | 9 files | 1 JS chunks
+  Run 2: 1.599s | 108K | 9 files | 1 JS chunks
+  Run 3: 1.646s | 108K | 9 files | 1 JS chunks
+  Run 4: 1.652s | 108K | 9 files | 1 JS chunks
+  Run 5: 1.713s | 108K | 9 files | 1 JS chunks
+
+AVERAGE RESULTS:
+  Average time: 1.650s ± 0.037s (CV: 2.2%)
+  Bundle size: 108K
+  Total files: 9
+  JS chunks: 1
+
+================================
+  TESTING: Single-SPA - home-app
+================================
+
+  Run 1: 1.773s | 136K | 9 files | 1 JS chunks
+  Run 2: 1.600s | 136K | 9 files | 1 JS chunks
+  Run 3: 1.696s | 136K | 9 files | 1 JS chunks
+  Run 4: 1.702s | 136K | 9 files | 1 JS chunks
+  Run 5: 1.615s | 136K | 9 files | 1 JS chunks
+
+AVERAGE RESULTS:
+  Average time: 1.677s ± 0.063s (CV: 3.8%)
+  Bundle size: 136K
+  Total files: 9
+  JS chunks: 1
+
+================================
+  TESTING: Single-SPA - ui-utils
+================================
+
+  Run 1: 1.911s | 1,5M | 19 files | 1 JS chunks
+  Run 2: 1.852s | 1,5M | 19 files | 1 JS chunks
+  Run 3: 1.928s | 1,5M | 19 files | 1 JS chunks
+  Run 4: 1.872s | 1,5M | 19 files | 1 JS chunks
+  Run 5: 1.904s | 1,5M | 19 files | 1 JS chunks
+
+AVERAGE RESULTS:
+  Average time: 1.893s ± 0.028s (CV: 1.5%)
+  Bundle size: 1,5M
+  Total files: 19
+  JS chunks: 1
+
+>>> TOTAL Single-SPA <<<
+  Total average build time: 6.512s
+  Applications: 4
+
+
+=====================================
+  FINAL OVERALL COMPARISON
+=====================================
+
+Module Federation (sum of averages): 1.62541s
+Single-SPA (sum of averages): 6.51246s
+Absolute difference: -4.887s
+
+Module Federation is 75.04% faster
+
+=====================================
+Results saved to: reports/build/benchmark_results_20251007_220659.txt
+=====================================

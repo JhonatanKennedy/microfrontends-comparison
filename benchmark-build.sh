@@ -10,7 +10,11 @@ NC='\033[0m'
 
 RUNS=5
 
-RESULTS_FILE="benchmark_results_$(date +%Y%m%d_%H%M%S).txt"
+REPORTS_DIR="reports/build"
+
+mkdir -p "$REPORTS_DIR"
+
+RESULTS_FILE="${REPORTS_DIR}/benchmark_results_$(date +%Y%m%d_%H%M%S).txt"
 
 print_both() {
     local text="$1"
@@ -200,6 +204,41 @@ calculate_average() {
     echo "$avg"
 }
 
+calculate_stddev() {
+    local avg=$1
+    shift
+    local times=("$@")
+    
+    local stddev=$(awk -v avg="$avg" -v times="${times[*]}" '
+    BEGIN {
+        sum_sq_diff = 0
+        count = 0
+        split(times, arr, " ")
+        
+        for (i in arr) {
+            val = arr[i]
+            # Clean leading zeros and convert .xxx to 0.xxx
+            gsub(/^0+/, "", val)
+            if (val ~ /^\./) val = "0" val
+            
+            if (val ~ /^[0-9]*\.?[0-9]+$/ && val > 0) {
+                diff = val - avg
+                sum_sq_diff += diff * diff
+                count++
+            }
+        }
+        
+        if (count > 0) {
+            stddev = sqrt(sum_sq_diff / count)
+            printf "%.3f", stddev
+        } else {
+            print "0.000"
+        }
+    }')
+    
+    echo "$stddev"
+}
+
 benchmark_project() {
     local project_name=$1
     local project_path=$2
@@ -257,7 +296,15 @@ benchmark_project() {
     print_both "AVERAGE RESULTS:" "$GREEN"
     
     avg_time=$(calculate_average "${times[@]}")
-    print_both "  Average time: ${avg_time}s"
+    stddev_time=$(calculate_stddev "$avg_time" "${times[@]}")
+    
+    # Calculate coefficient of variation (CV) as percentage
+    cv=$(awk -v stddev="$stddev_time" -v avg="$avg_time" 'BEGIN {
+        if (avg > 0) printf "%.1f", (stddev/avg)*100
+        else print "0.0"
+    }')
+    
+    print_both "  Average time: ${avg_time}s ± ${stddev_time}s (CV: ${cv}%)"
     print_both "  Bundle size: ${sizes[0]}"
     print_both "  Total files: ${files[0]}"
     print_both "  JS chunks: ${chunks[0]}"
