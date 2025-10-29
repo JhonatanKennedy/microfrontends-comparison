@@ -1,14 +1,9 @@
-import data from "../data/index.json";
 import { useEffect, useState } from "react";
 import { Container } from "../components/Container";
 import { Product } from "../components/Product";
 import { Typography, Box, useStore } from "@single-spa/ui-utils";
 import { Header } from "../components/Header";
 import { TProduct } from "mf-tgc-types";
-
-type ResponseApi = {
-  products: TProduct[];
-};
 
 export function Home() {
   const [products, setProducts] = useState<TProduct[]>([]);
@@ -24,13 +19,10 @@ export function Home() {
   }
 
   async function fetchDefaultData() {
-    const response: ResponseApi = await new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(data as ResponseApi);
-      }, 2000);
-    });
+    const response = await fetch("http://localhost:3000/products");
+    const productArray: TProduct[] = await response.json();
 
-    setProducts(response.products);
+    setProducts(productArray);
   }
 
   useEffect(() => {
