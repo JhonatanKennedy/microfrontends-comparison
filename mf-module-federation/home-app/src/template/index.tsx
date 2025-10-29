@@ -25,13 +25,10 @@ export function Home() {
   }
 
   async function fetchDefaultData() {
-    const response: ResponseApi = await new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(data as ResponseApi);
-      }, 2000);
-    });
+    const response = await fetch("http://localhost:3000/products");
+    const productArray: TProduct[] = await response.json();
 
-    setProducts(response.products);
+    setProducts(productArray);
   }
 
   useEffect(() => {
