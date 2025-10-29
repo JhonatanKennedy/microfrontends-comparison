@@ -1,4 +1,3 @@
-import data from "../data/index.json";
 import { useEffect, useState } from "react";
 import { Container } from "../components/Container";
 import { Product } from "../components/Product";
@@ -6,10 +5,6 @@ import { Typography, Box, useStore } from "uiUtils";
 import { Header } from "../components/Header";
 import { TProduct } from "mf-tgc-types";
 import "../global.css";
-
-type ResponseApi = {
-  products: TProduct[];
-};
 
 export function Home() {
   const [products, setProducts] = useState<TProduct[]>([]);
