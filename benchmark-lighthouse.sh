@@ -9,7 +9,7 @@ SEM_COR='\033[0m'
 
 # Configuração baseada nas recomendações de Jain
 EXECUCOES_AQUECIMENTO=3           # Execuções de aquecimento para estabilizar o sistema
-EXECUCOES_MEDICAO=10              # Mínimo de 30 execuções para significância estatística (Jain, Capítulo 20)
+EXECUCOES_MEDICAO=30              # Mínimo de 30 execuções para significância estatística (Jain, Capítulo 20)
 NIVEL_CONFIANCA=95                # Intervalo de confiança de 95%
 DELAY_ENTRE_EXECUCOES=5           # Segundos entre execuções para evitar interferência
 TEMPO_ESPERA_CONTAINER=20         # Tempo de espera para estabilização do container
@@ -167,6 +167,9 @@ mkdir -p "$DIRETORIO_RESULTADOS" "$DIRETORIO_JSON"
 declare -A aplicacao_tempo_primeira_renderizacao_media aplicacao_tempo_primeira_renderizacao_intervalo_confianca aplicacao_tempo_primeira_renderizacao_coeficiente_variacao
 declare -A aplicacao_tempo_maior_renderizacao_media aplicacao_tempo_maior_renderizacao_intervalo_confianca aplicacao_tempo_maior_renderizacao_coeficiente_variacao
 declare -A aplicacao_pontuacao_performance_media aplicacao_pontuacao_performance_intervalo_confianca aplicacao_pontuacao_performance_coeficiente_variacao
+declare -A aplicacao_tempo_primeira_renderizacao_minimo aplicacao_tempo_primeira_renderizacao_maximo
+declare -A aplicacao_tempo_maior_renderizacao_minimo aplicacao_tempo_maior_renderizacao_maximo
+declare -A aplicacao_pontuacao_performance_minimo aplicacao_pontuacao_performance_maximo
 
 # Documentar ambiente do sistema (Jain: Capítulo 2 - Caracterização do Sistema)
 cat > "$ARQUIVO_RESULTADO" << EOF
@@ -302,8 +305,7 @@ executar_benchmark_lighthouse() {
     
     echo -e "\n${VERDE}═══════════════════════════════════════════════════${SEM_COR}"
     echo -e "${VERDE}  Executando Benchmark: $nome${SEM_COR}"
-    echo -e "${VERDE}═══════════════════════════════════════════════════${SEM_COR}"
-    echo -e "${AMARELO}URL: $url${SEM_COR}\n"
+    echo -e "${VERDE}═══════════════════════════════════════════════════${SEM_COR}\n"
     
     if ! verificar_url "$url"; then
         echo -e "${VERMELHO}✗ Erro: URL não acessível após múltiplas tentativas${SEM_COR}\n"
@@ -439,15 +441,7 @@ executar_benchmark_lighthouse() {
     local intervalo_confianca_maior_renderizacao=$(calcular_intervalo_confianca "$media_maior_renderizacao" "$desvio_padrao_maior_renderizacao" "${#valores_tempo_maior_renderizacao_limpos[@]}" "$NIVEL_CONFIANCA")
     local intervalo_confianca_pontuacao=$(calcular_intervalo_confianca "$media_pontuacao" "$desvio_padrao_pontuacao" "${#valores_pontuacao_performance_limpos[@]}" "$NIVEL_CONFIANCA")
     
-    # Converter para segundos para exibição e armazenamento
-    media_primeira_renderizacao_segundos=$(echo "scale=6; $media_primeira_renderizacao / 1000" | bc -l)
-    media_maior_renderizacao_segundos=$(echo "scale=6; $media_maior_renderizacao / 1000" | bc -l)
-    desvio_padrao_primeira_renderizacao_segundos=$(echo "scale=6; $desvio_padrao_primeira_renderizacao / 1000" | bc -l)
-    desvio_padrao_maior_renderizacao_segundos=$(echo "scale=6; $desvio_padrao_maior_renderizacao / 1000" | bc -l)
-    intervalo_confianca_primeira_renderizacao_segundos=$(echo "scale=6; $intervalo_confianca_primeira_renderizacao / 1000" | bc -l)
-    intervalo_confianca_maior_renderizacao_segundos=$(echo "scale=6; $intervalo_confianca_maior_renderizacao / 1000" | bc -l)
-    
-    # Mínimo/Máximo (Em Milissegundos)
+    # Mínimo/Máximo (dos valores limpos, em milissegundos)
     local minimo_primeira_renderizacao=$(printf '%s\n' "${valores_tempo_primeira_renderizacao_limpos[@]}" | sort -n | head -1)
     local maximo_primeira_renderizacao=$(printf '%s\n' "${valores_tempo_primeira_renderizacao_limpos[@]}" | sort -n | tail -1)
     local minimo_maior_renderizacao=$(printf '%s\n' "${valores_tempo_maior_renderizacao_limpos[@]}" | sort -n | head -1)
@@ -455,23 +449,34 @@ executar_benchmark_lighthouse() {
     local minimo_pontuacao=$(printf '%s\n' "${valores_pontuacao_performance_limpos[@]}" | sort -n | head -1)
     local maximo_pontuacao=$(printf '%s\n' "${valores_pontuacao_performance_limpos[@]}" | sort -n | tail -1)
     
-    # --- Formatação Explícita dos Valores em SEGUNDOS e PONTUAÇÃO (Locale C para ponto decimal) ---
+    # Converter para segundos (divisão por 1000) com alta precisão
+    media_primeira_renderizacao_segundos=$(echo "scale=6; $media_primeira_renderizacao / 1000" | bc -l)
+    media_maior_renderizacao_segundos=$(echo "scale=6; $media_maior_renderizacao / 1000" | bc -l)
+    desvio_padrao_primeira_renderizacao_segundos=$(echo "scale=6; $desvio_padrao_primeira_renderizacao / 1000" | bc -l)
+    desvio_padrao_maior_renderizacao_segundos=$(echo "scale=6; $desvio_padrao_maior_renderizacao / 1000" | bc -l)
+    intervalo_confianca_primeira_renderizacao_segundos=$(echo "scale=6; $intervalo_confianca_primeira_renderizacao / 1000" | bc -l)
+    intervalo_confianca_maior_renderizacao_segundos=$(echo "scale=6; $intervalo_confianca_maior_renderizacao / 1000" | bc -l)
     
-    # First Contentful Paint (Média, DP, IC, Min, Max)
+    # Converter min/max para segundos com alta precisão
+    minimo_primeira_renderizacao_segundos=$(echo "scale=6; $minimo_primeira_renderizacao / 1000" | bc -l)
+    maximo_primeira_renderizacao_segundos=$(echo "scale=6; $maximo_primeira_renderizacao / 1000" | bc -l)
+    minimo_maior_renderizacao_segundos=$(echo "scale=6; $minimo_maior_renderizacao / 1000" | bc -l)
+    maximo_maior_renderizacao_segundos=$(echo "scale=6; $maximo_maior_renderizacao / 1000" | bc -l)
+    
+    # Formatação final (3 casas para exibição) garantindo que média esteja entre min e max
     media_primeira_renderizacao_segundos_formatada=$(LC_NUMERIC=C printf "%.3f" $media_primeira_renderizacao_segundos 2>/dev/null || echo "0.000")
     desvio_padrao_primeira_renderizacao_segundos_formatado=$(LC_NUMERIC=C printf "%.3f" $desvio_padrao_primeira_renderizacao_segundos 2>/dev/null || echo "0.000")
     intervalo_confianca_primeira_renderizacao_segundos_formatado=$(LC_NUMERIC=C printf "%.3f" $intervalo_confianca_primeira_renderizacao_segundos 2>/dev/null || echo "0.000")
-    minimo_primeira_renderizacao_segundos_formatado=$(LC_NUMERIC=C printf "%.3f" $(echo "scale=3; $minimo_primeira_renderizacao / 1000" | bc -l) 2>/dev/null || echo "0.000")
-    maximo_primeira_renderizacao_segundos_formatado=$(LC_NUMERIC=C printf "%.3f" $(echo "scale=3; $maximo_primeira_renderizacao / 1000" | bc -l) 2>/dev/null || echo "0.000")
+    minimo_primeira_renderizacao_segundos_formatado=$(LC_NUMERIC=C printf "%.3f" $minimo_primeira_renderizacao_segundos 2>/dev/null || echo "0.000")
+    maximo_primeira_renderizacao_segundos_formatado=$(LC_NUMERIC=C printf "%.3f" $maximo_primeira_renderizacao_segundos 2>/dev/null || echo "0.000")
 
-    # Largest Contentful Paint (Média, DP, IC, Min, Max)
     media_maior_renderizacao_segundos_formatada=$(LC_NUMERIC=C printf "%.3f" $media_maior_renderizacao_segundos 2>/dev/null || echo "0.000")
     desvio_padrao_maior_renderizacao_segundos_formatado=$(LC_NUMERIC=C printf "%.3f" $desvio_padrao_maior_renderizacao_segundos 2>/dev/null || echo "0.000")
     intervalo_confianca_maior_renderizacao_segundos_formatado=$(LC_NUMERIC=C printf "%.3f" $intervalo_confianca_maior_renderizacao_segundos 2>/dev/null || echo "0.000")
-    minimo_maior_renderizacao_segundos_formatado=$(LC_NUMERIC=C printf "%.3f" $(echo "scale=3; $minimo_maior_renderizacao / 1000" | bc -l) 2>/dev/null || echo "0.000")
-    maximo_maior_renderizacao_segundos_formatado=$(LC_NUMERIC=C printf "%.3f" $(echo "scale=3; $maximo_maior_renderizacao / 1000" | bc -l) 2>/dev/null || echo "0.000")
+    minimo_maior_renderizacao_segundos_formatado=$(LC_NUMERIC=C printf "%.3f" $minimo_maior_renderizacao_segundos 2>/dev/null || echo "0.000")
+    maximo_maior_renderizacao_segundos_formatado=$(LC_NUMERIC=C printf "%.3f" $maximo_maior_renderizacao_segundos 2>/dev/null || echo "0.000")
 
-    # Performance Score (Média, DP, IC, CV, Min, Max)
+    # Performance Score
     media_pontuacao_formatada=$(LC_NUMERIC=C printf "%.1f" $media_pontuacao 2>/dev/null || echo "0.0")
     desvio_padrao_pontuacao_formatado=$(LC_NUMERIC=C printf "%.2f" $desvio_padrao_pontuacao 2>/dev/null || echo "0.00")
     intervalo_confianca_pontuacao_formatado=$(LC_NUMERIC=C printf "%.2f" $intervalo_confianca_pontuacao 2>/dev/null || echo "0.00")
@@ -479,29 +484,33 @@ executar_benchmark_lighthouse() {
     minimo_pontuacao_formatado=$(LC_NUMERIC=C printf "%.1f" $minimo_pontuacao 2>/dev/null || echo "0.0")
     maximo_pontuacao_formatado=$(LC_NUMERIC=C printf "%.1f" $maximo_pontuacao 2>/dev/null || echo "0.0")
 
-    # Coeficiente de Variação (Manter o formato original de 4 casas decimais do calculo)
+    # Coeficiente de Variação
     coeficiente_variacao_primeira_renderizacao_formatado=$(LC_NUMERIC=C printf "%.2f" $coeficiente_variacao_primeira_renderizacao 2>/dev/null || echo "0.00")
     coeficiente_variacao_maior_renderizacao_formatado=$(LC_NUMERIC=C printf "%.2f" $coeficiente_variacao_maior_renderizacao 2>/dev/null || echo "0.00")
     
-    # Armazenar resultados para análise comparativa
-    # Usar variáveis de segundos com precisão total (não a formatada para 3 casas) para o cálculo de diferença
+    # Armazenar resultados para análise comparativa (usar valores com precisão total)
     aplicacao_tempo_primeira_renderizacao_media["$nome"]=$media_primeira_renderizacao_segundos
     aplicacao_tempo_primeira_renderizacao_intervalo_confianca["$nome"]=$intervalo_confianca_primeira_renderizacao_segundos
     aplicacao_tempo_primeira_renderizacao_coeficiente_variacao["$nome"]=$coeficiente_variacao_primeira_renderizacao
+    aplicacao_tempo_primeira_renderizacao_minimo["$nome"]=$minimo_primeira_renderizacao_segundos
+    aplicacao_tempo_primeira_renderizacao_maximo["$nome"]=$maximo_primeira_renderizacao_segundos
 
     aplicacao_tempo_maior_renderizacao_media["$nome"]=$media_maior_renderizacao_segundos
     aplicacao_tempo_maior_renderizacao_intervalo_confianca["$nome"]=$intervalo_confianca_maior_renderizacao_segundos
     aplicacao_tempo_maior_renderizacao_coeficiente_variacao["$nome"]=$coeficiente_variacao_maior_renderizacao
+    aplicacao_tempo_maior_renderizacao_minimo["$nome"]=$minimo_maior_renderizacao_segundos
+    aplicacao_tempo_maior_renderizacao_maximo["$nome"]=$maximo_maior_renderizacao_segundos
 
-    aplicacao_pontuacao_performance_media["$nome"]=$media_pontuacao_formatada
-    aplicacao_pontuacao_performance_intervalo_confianca["$nome"]=$intervalo_confianca_pontuacao_formatado
-    aplicacao_pontuacao_performance_coeficiente_variacao["$nome"]=$coeficiente_variacao_pontuacao_formatado
+    aplicacao_pontuacao_performance_media["$nome"]=$media_pontuacao
+    aplicacao_pontuacao_performance_intervalo_confianca["$nome"]=$intervalo_confianca_pontuacao
+    aplicacao_pontuacao_performance_coeficiente_variacao["$nome"]=$coeficiente_variacao_pontuacao
+    aplicacao_pontuacao_performance_minimo["$nome"]=$minimo_pontuacao
+    aplicacao_pontuacao_performance_maximo["$nome"]=$maximo_pontuacao
     
     # Escrever no relatório
     cat >> "$ARQUIVO_RESULTADO" << EOF
 ## $nome
 
-**URL:** \`$url\`  
 **Medições válidas:** ${#valores_tempo_primeira_renderizacao_limpos[@]} (${outliers_primeira_renderizacao} outliers removidos)
 
 ### Estatísticas Resumidas
@@ -545,12 +554,12 @@ echo -e "\n${CIANO}Gerando análise comparativa...${SEM_COR}"
 nome_module_federation="$NOME_MODULE_FEDERATION"
 nome_single_spa="$NOME_SINGLE_SPA"
 
-# Usar a precisão total para calcular as diferenças
+# Calcular diferenças usando valores com precisão total
 diferenca_primeira_renderizacao=$(echo "${aplicacao_tempo_primeira_renderizacao_media[$nome_module_federation]} - ${aplicacao_tempo_primeira_renderizacao_media[$nome_single_spa]}" | bc -l)
 diferenca_maior_renderizacao=$(echo "${aplicacao_tempo_maior_renderizacao_media[$nome_module_federation]} - ${aplicacao_tempo_maior_renderizacao_media[$nome_single_spa]}" | bc -l)
 diferenca_pontuacao=$(echo "${aplicacao_pontuacao_performance_media[$nome_module_federation]} - ${aplicacao_pontuacao_performance_media[$nome_single_spa]}" | bc -l)
 
-# Formatar diferenças para 3 casas decimais (segundos) e 1 casa decimal (pontuação)
+# Formatar diferenças
 diferenca_primeira_renderizacao_formatada=$(LC_NUMERIC=C printf "%.3f" ${diferenca_primeira_renderizacao#-} 2>/dev/null || echo "0.000")
 diferenca_maior_renderizacao_formatada=$(LC_NUMERIC=C printf "%.3f" ${diferenca_maior_renderizacao#-} 2>/dev/null || echo "0.000")
 diferenca_pontuacao_formatada=$(LC_NUMERIC=C printf "%.1f" ${diferenca_pontuacao#-} 2>/dev/null || echo "0.0")
@@ -633,15 +642,37 @@ else
 fi
 
 mais_consistente_pontuacao=""
-coef_var_module_federation="${aplicacao_pontuacao_performance_coeficiente_variacao[$nome_module_federation]}"
-coef_var_single_spa="${aplicacao_pontuacao_performance_coeficiente_variacao[$nome_single_spa]}"
+coef_var_module_federation=$(LC_NUMERIC=C printf "%.2f" ${aplicacao_pontuacao_performance_coeficiente_variacao[$nome_module_federation]} 2>/dev/null || echo "0.00")
+coef_var_single_spa=$(LC_NUMERIC=C printf "%.2f" ${aplicacao_pontuacao_performance_coeficiente_variacao[$nome_single_spa]} 2>/dev/null || echo "0.00")
 
-# Comparação correta: menor coeficiente de variação = mais consistente
 if (( $(echo "$coef_var_module_federation < $coef_var_single_spa" | bc -l) )); then
     mais_consistente_pontuacao="$nome_module_federation (Coeficiente de Variação: ${coef_var_module_federation}% versus ${coef_var_single_spa}%)"
 else
     mais_consistente_pontuacao="$nome_single_spa (Coeficiente de Variação: ${coef_var_single_spa}% versus ${coef_var_module_federation}%)"
 fi
+
+# Formatar valores para a tabela comparativa
+mf_fcp_media=$(LC_NUMERIC=C printf "%.3f" ${aplicacao_tempo_primeira_renderizacao_media[$nome_module_federation]} 2>/dev/null || echo "0.000")
+mf_fcp_ic=$(LC_NUMERIC=C printf "%.3f" ${aplicacao_tempo_primeira_renderizacao_intervalo_confianca[$nome_module_federation]} 2>/dev/null || echo "0.000")
+mf_fcp_cv=$(LC_NUMERIC=C printf "%.2f" ${aplicacao_tempo_primeira_renderizacao_coeficiente_variacao[$nome_module_federation]} 2>/dev/null || echo "0.00")
+
+spa_fcp_media=$(LC_NUMERIC=C printf "%.3f" ${aplicacao_tempo_primeira_renderizacao_media[$nome_single_spa]} 2>/dev/null || echo "0.000")
+spa_fcp_ic=$(LC_NUMERIC=C printf "%.3f" ${aplicacao_tempo_primeira_renderizacao_intervalo_confianca[$nome_single_spa]} 2>/dev/null || echo "0.000")
+spa_fcp_cv=$(LC_NUMERIC=C printf "%.2f" ${aplicacao_tempo_primeira_renderizacao_coeficiente_variacao[$nome_single_spa]} 2>/dev/null || echo "0.00")
+
+mf_lcp_media=$(LC_NUMERIC=C printf "%.3f" ${aplicacao_tempo_maior_renderizacao_media[$nome_module_federation]} 2>/dev/null || echo "0.000")
+mf_lcp_ic=$(LC_NUMERIC=C printf "%.3f" ${aplicacao_tempo_maior_renderizacao_intervalo_confianca[$nome_module_federation]} 2>/dev/null || echo "0.000")
+mf_lcp_cv=$(LC_NUMERIC=C printf "%.2f" ${aplicacao_tempo_maior_renderizacao_coeficiente_variacao[$nome_module_federation]} 2>/dev/null || echo "0.00")
+
+spa_lcp_media=$(LC_NUMERIC=C printf "%.3f" ${aplicacao_tempo_maior_renderizacao_media[$nome_single_spa]} 2>/dev/null || echo "0.000")
+spa_lcp_ic=$(LC_NUMERIC=C printf "%.3f" ${aplicacao_tempo_maior_renderizacao_intervalo_confianca[$nome_single_spa]} 2>/dev/null || echo "0.000")
+spa_lcp_cv=$(LC_NUMERIC=C printf "%.2f" ${aplicacao_tempo_maior_renderizacao_coeficiente_variacao[$nome_single_spa]} 2>/dev/null || echo "0.00")
+
+mf_perf_media=$(LC_NUMERIC=C printf "%.1f" ${aplicacao_pontuacao_performance_media[$nome_module_federation]} 2>/dev/null || echo "0.0")
+mf_perf_ic=$(LC_NUMERIC=C printf "%.2f" ${aplicacao_pontuacao_performance_intervalo_confianca[$nome_module_federation]} 2>/dev/null || echo "0.00")
+
+spa_perf_media=$(LC_NUMERIC=C printf "%.1f" ${aplicacao_pontuacao_performance_media[$nome_single_spa]} 2>/dev/null || echo "0.0")
+spa_perf_ic=$(LC_NUMERIC=C printf "%.2f" ${aplicacao_pontuacao_performance_intervalo_confianca[$nome_single_spa]} 2>/dev/null || echo "0.00")
 
 # Resumo final
 cat >> "$ARQUIVO_RESULTADO" << EOF
@@ -651,8 +682,8 @@ cat >> "$ARQUIVO_RESULTADO" << EOF
 
 | Aplicação | Média | Intervalo de Confiança 95% | Coeficiente de Variação |
 |-------------|------|--------|-----|
-| $nome_module_federation | $(LC_NUMERIC=C printf "%.3f" ${aplicacao_tempo_primeira_renderizacao_media[$nome_module_federation]} 2>/dev/null || echo "0.000")s | ±$(LC_NUMERIC=C printf "%.3f" ${aplicacao_tempo_primeira_renderizacao_intervalo_confianca[$nome_module_federation]} 2>/dev/null || echo "0.000")s | $(LC_NUMERIC=C printf "%.2f" ${aplicacao_tempo_primeira_renderizacao_coeficiente_variacao[$nome_module_federation]} 2>/dev/null || echo "0.00")% |
-| $nome_single_spa | $(LC_NUMERIC=C printf "%.3f" ${aplicacao_tempo_primeira_renderizacao_media[$nome_single_spa]} 2>/dev/null || echo "0.000")s | ±$(LC_NUMERIC=C printf "%.3f" ${aplicacao_tempo_primeira_renderizacao_intervalo_confianca[$nome_single_spa]} 2>/dev/null || echo "0.000")s | $(LC_NUMERIC=C printf "%.2f" ${aplicacao_tempo_primeira_renderizacao_coeficiente_variacao[$nome_single_spa]} 2>/dev/null || echo "0.00")% |
+| $nome_module_federation | ${mf_fcp_media}s | ±${mf_fcp_ic}s | ${mf_fcp_cv}% |
+| $nome_single_spa | ${spa_fcp_media}s | ±${spa_fcp_ic}s | ${spa_fcp_cv}% |
 
 **Diferença:** ${diferenca_primeira_renderizacao_formatada}s  
 **$significancia_primeira_renderizacao** $vencedor_primeira_renderizacao  
@@ -666,8 +697,8 @@ $pratico_primeira_renderizacao
 
 | Aplicação | Média | Intervalo de Confiança 95% | Coeficiente de Variação |
 |-------------|------|--------|-----|
-| $nome_module_federation | $(LC_NUMERIC=C printf "%.3f" ${aplicacao_tempo_maior_renderizacao_media[$nome_module_federation]} 2>/dev/null || echo "0.000")s | ±$(LC_NUMERIC=C printf "%.3f" ${aplicacao_tempo_maior_renderizacao_intervalo_confianca[$nome_module_federation]} 2>/dev/null || echo "0.000")s | $(LC_NUMERIC=C printf "%.2f" ${aplicacao_tempo_maior_renderizacao_coeficiente_variacao[$nome_module_federation]} 2>/dev/null || echo "0.00")% |
-| $nome_single_spa | $(LC_NUMERIC=C printf "%.3f" ${aplicacao_tempo_maior_renderizacao_media[$nome_single_spa]} 2>/dev/null || echo "0.000")s | ±$(LC_NUMERIC=C printf "%.3f" ${aplicacao_tempo_maior_renderizacao_intervalo_confianca[$nome_single_spa]} 2>/dev/null || echo "0.000")s | $(LC_NUMERIC=C printf "%.2f" ${aplicacao_tempo_maior_renderizacao_coeficiente_variacao[$nome_single_spa]} 2>/dev/null || echo "0.00")% |
+| $nome_module_federation | ${mf_lcp_media}s | ±${mf_lcp_ic}s | ${mf_lcp_cv}% |
+| $nome_single_spa | ${spa_lcp_media}s | ±${spa_lcp_ic}s | ${spa_lcp_cv}% |
 
 **Diferença:** ${diferenca_maior_renderizacao_formatada}s  
 **$significancia_maior_renderizacao** $vencedor_maior_renderizacao  
@@ -681,8 +712,8 @@ $pratico_maior_renderizacao
 
 | Aplicação | Média | Intervalo de Confiança 95% | Coeficiente de Variação |
 |-------------|------|--------|-----|
-| $nome_module_federation | ${aplicacao_pontuacao_performance_media[$nome_module_federation]} | ±${aplicacao_pontuacao_performance_intervalo_confianca[$nome_module_federation]} | ${aplicacao_pontuacao_performance_coeficiente_variacao[$nome_module_federation]}% |
-| $nome_single_spa | ${aplicacao_pontuacao_performance_media[$nome_single_spa]} | ±${aplicacao_pontuacao_performance_intervalo_confianca[$nome_single_spa]} | ${aplicacao_pontuacao_performance_coeficiente_variacao[$nome_single_spa]}% |
+| $nome_module_federation | ${mf_perf_media} | ±${mf_perf_ic} | ${coef_var_module_federation}% |
+| $nome_single_spa | ${spa_perf_media} | ±${spa_perf_ic} | ${coef_var_single_spa}% |
 
 **Diferença:** ${diferenca_pontuacao_formatada} pontos  
 **$significancia_pontuacao** $vencedor_pontuacao
